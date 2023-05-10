@@ -1,0 +1,407 @@
+
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Albuquerque Softserve| Store</title>
+        <meta name="description" content="Homepage">
+        <link rel="stylesheet" href="styles.css" />
+        <script src="store.js" async></script>
+        <style>
+            .shop-item-image {
+                border-radius: 50%;
+                height: 200px;
+                width: 200px;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="main-header">
+            <nav class="main-nav nav">
+                <ul>
+                    <li><a href="homePage.html">HOME</a></li>
+                    <li><a href="store.html">ABOUT STORE</a></li>
+                    <li><a href="manager.html">LOGIN</a></li>
+                </ul>
+            </nav>
+            <h1 class="band-name band-name-large">Albuquerque Softserve</h1>
+        </header>
+
+        
+        <section class="container content-section">
+            <h2 class="section-header">Pint Flavors Availible </h2>
+            <div class="shop-items">
+               
+<!-- auto populate the icream variety from .json -->
+<head>
+
+
+
+    <style>
+        #output {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .shop-item {
+            box-sizing: border-box;
+            width: calc(33.333% - 20px);
+            margin: 10px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            text-align: center;
+        }
+        #notification {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background-color: #4CAF50;
+                color: white;
+                padding: 15px;
+                display: none;
+            }
+        </style>
+
+
+
+
+
+
+   <script>
+    async function fetchData() {
+        const response = await fetch("https://teamcs334.pythonanywhere.com/ice_cream", { method: "GET" });
+        const data = await response.json();
+
+        const output = document.getElementById("output");
+        output.innerHTML = "";
+
+        data.forEach(item => {
+            const shopItem = document.createElement("div");
+            shopItem.className = "shop-item";
+
+            const title = document.createElement("span");
+            title.className = "shop-item-title";
+            title.textContent = item.name; // Assuming the item has a property called 'name'
+            shopItem.appendChild(title);
+
+            const image = document.createElement("img");
+            image.className = "shop-item-image";
+            image.src = item.image; // Assuming the item has a property called 'image'
+            shopItem.appendChild(image);
+
+            const details = document.createElement("div");
+            details.className = "shop-item-details";
+
+            const price = document.createElement("span");
+            price.className = "shop-item-price";
+            price.textContent = `$${item.price}`; // Assuming the item has a property called 'price'
+            details.appendChild(price);
+
+            const button = document.createElement("button");
+            button.className = "favorite styled";
+            button.type = "button";
+            button.textContent = "ADD TO CART";
+            details.appendChild(button);
+
+
+            shopItem.appendChild(details);
+            output.appendChild(shopItem);
+
+
+
+
+            button.addEventListener('click', () => {
+                    addToCart(item);
+                });
+
+                shopItem.appendChild(details);
+                output.appendChild(shopItem);
+            });
+        };
+
+<!--  PUSH TO ORDERS BACK END -->
+        async function sendOrderData(userId, quantity, totalPrice, orderDate, iceCreamId) {
+        const data = {
+            user_id: userId,
+            quantity: quantity,
+            total_price: totalPrice,
+            order_date: orderDate,
+            ice_cream_id: iceCreamId
+        };
+
+        const response = await fetch("https://teamcs334.pythonanywhere.com/orders", {
+            method: "POST",                
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            console.log("Order data sent successfully");
+        } else {
+            console.error("Error sending order data:", response.statusText);
+        }
+    }
+
+    async function sendOrderData(userId, quantity, totalPrice, orderDate, iceCreamId) {
+        const data = {
+            user_id: userId,
+            quantity: quantity,
+            total_price: totalPrice,
+            order_date: orderDate,
+            ice_cream_id: iceCreamId
+        };
+
+        const response = await fetch("https://teamcs334.pythonanywhere.com/orders", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            console.log("Order data sent successfully");
+        } else {
+            console.error("Error sending order data:", response.statusText);
+        }
+    }
+
+    function addToCart(item) {
+            const cartItems = document.querySelector('.cart-items');
+            const cartTotal = document.querySelector('.cart-total-price');
+            const cartRow = document.createElement('div');
+            cartRow.className = 'cart-row';
+            cartItems.appendChild(cartRow);
+
+            const cartItemImageContainer = document.createElement('div');
+            cartItemImageContainer.className = 'cart-item cart-column';
+            const cartItemImage = document.createElement('img');
+            cartItemImage.src = item.image;
+            cartItemImage.style.width = '50px';
+            cartItemImage.style.height = '50px';
+            cartItemImageContainer.appendChild(cartItemImage);
+            cartRow.appendChild(cartItemImageContainer);
+
+            const cartItem = document.createElement('span');
+            cartItem.className = 'cart-item cart-column';
+            cartItem.textContent = item.name;
+            cartRow.appendChild(cartItem);
+
+            const cartPrice = document.createElement('span');
+            cartPrice.className = 'cart-price cart-column';
+            cartPrice.textContent = `$${item.price}`;
+            cartRow.appendChild(cartPrice);
+
+            const cartQuantity = document.createElement('span');
+            cartQuantity.className = 'cart-quantity cart-column';
+            cartQuantity.textContent = '1';
+            cartRow.appendChild(cartQuantity);
+
+            const currentTotal = parseFloat(cartTotal.textContent.slice(1));
+            const newTotal = (currentTotal + parseFloat(item.price)).toFixed(2);
+            cartTotal.textContent = `$${newTotal}`;
+
+
+
+            const userId = Math.floor(Math.random() * 100) + 1;
+        const quantity = 1; // Assuming quantity is always 1
+        const totalPrice = parseFloat(item.price);
+        const orderDate = new Date().toISOString().slice(0, 10); // Get current date in YYYY-MM-DD format
+        const iceCreamId = item.id; // Assuming the item has a property called 'id'
+
+        sendOrderData(userId, quantity, totalPrice, orderDate, iceCreamId);
+        }
+
+
+
+    
+
+    
+
+    // Call fetchData when the page is loaded
+    window.onload = fetchData;
+</script>
+</head>
+<body>
+ <!--   <h1>Ice Cream Data</h1>   -->  
+    <div id="output"></div>
+</body>
+
+
+<!-- end-->
+
+
+
+
+  <!--SHOPPING CART at bottom           -->
+         <!-- Cart section -->
+         <section class="container content-section">
+            <h2 class="section-header">Cart</h2>
+            <div class="cart-row">
+                <span class="shop-item-title cart-header cart-column">ITEM</span>
+                <span class="cart-price cart-header cart-column">PRICE</span>
+                <span class="cart-quantity cart-header cart-column">QUANTITY</span>
+            </div>
+            <div class="cart-items"></div>
+            <div class="cart-total">
+                <strong class="cart-total-title">Total</strong>
+                <span class="cart-total-price">$0</span>
+            </div>
+            <button class="btn btn-primary btn-purchase" type="button" onclick="purchaseItems()">PURCHASE</button>
+
+            <script>
+                async function purchaseItems() {
+                    const name = prompt("Please enter your name");
+                    if (name == null || name == "") {
+                        alert("Name must be filled out");
+                        return;
+                    }
+            
+                    const email = prompt("Please enter your email");
+                    if (email == null || email == "") {
+                        alert("Email must be filled out");
+                        return;
+                    }
+            
+                    const cartItems = document.querySelectorAll('.cart-row:not(.cart-header)');
+                    const iceCream = Array.from(cartItems).map(cartItem => {
+                        return {
+                            "flavor": cartItem.querySelector('.cart-item').textContent,
+                            "amount": parseInt(cartItem.querySelector('.cart-quantity').textContent)
+                        };
+                    });
+            
+                    const total = parseFloat(document.querySelector('.cart-total-price').textContent.slice(1));
+            
+                    const data = {
+                        "email": "teamcs334@gmail.com",
+                        "name": name,
+                        "ice_cream": iceCream,
+                        "total": total
+                    };
+            
+                    const response = await fetch("http://teamcs334.pythonanywhere.com/send_email", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(data)
+                    });
+            
+                    if (response.ok) {
+                        alert("Order placed successfully");
+                    } else {
+                        console.error("Error placing order:", response.statusText);
+                    }
+                }
+            </script>
+
+            <script>
+                async function purchaseItems() {
+                    const name = prompt("Please enter your name");
+                    if (name == null || name == "") {
+                        alert("Name must be filled out");
+                        return;
+                    }
+            
+                    const email = prompt("Please enter your email");
+                    if (email == null || email == "") {
+                        alert("Email must be filled out");
+                        return;
+                    }
+            
+                    const cartItems = document.querySelectorAll('.cart-row:not(.cart-header)');
+                    const iceCream = Array.from(cartItems).map(cartItem => {
+                        return {
+                            "flavor": cartItem.querySelector('.cart-item').textContent,
+                            "amount": parseInt(cartItem.querySelector('.cart-quantity').textContent)
+                        };
+                    });
+            
+                    const total = parseFloat(document.querySelector('.cart-total-price').textContent.slice(1));
+            
+                    const data = {
+                        "email": "teamcs334@gmail.com",
+                        "name": name,
+                        "ice_cream": iceCream,
+                        "total": total
+                    };
+            
+                    const response = await fetch("http://teamcs334.pythonanywhere.com/send_email", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(data)
+                    });
+            
+                    if (response.ok) {
+                        alert("Order placed successfully");
+                    } else {
+                        console.error("Error placing order:", response.statusText);
+                    }
+                }
+            </script>
+            
+
+
+              
+      
+                
+<!--STATIC MERCHANDISE FOR SALE -->
+            </div>
+        </section>
+        <section class="container content-section">
+            <h2 class="section-header">MERCH</h2>
+            <div class="shop-items">
+                <div class="shop-item">
+                    <span class="shop-item-title">T-Shirt</span>
+                    <img class="shop-item-image" src="Images/shirt.png">
+                    <div class="shop-item-details">
+                        <span class="shop-item-price">$19.99</span>
+                        <p class="available-in-store">Available in store only</p>
+                    </div>
+                </div>
+                <div class="shop-item">
+                    <span class="shop-item-title">Coffee Cup</span>
+                    <img class="shop-item-image" src="Images/mug.webp">
+                    <div class="shop-item-details">
+                        <span class="shop-item-price">$6.99</span>
+                        <p class="available-in-store">Available in store only</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!--bottom footer of page                          -->
+        <footer class="main-footer">
+            <div class="container main-footer-container">
+                <h3 class="band-name">Albuquerque Softserve</h3>
+                <ul class="nav footer-nav">
+                    <li>
+                        <a href="https://www.youtube.com" target="_blank">
+                            <img src="Images/YouTube Logo.png">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.spotify.com" target="_blank">
+                            <img src="Images/Spotify Logo.png">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.facebook.com" target="_blank">
+                            <img src="Images/Facebook Logo.png">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </footer>
+    </body>
+</html>
